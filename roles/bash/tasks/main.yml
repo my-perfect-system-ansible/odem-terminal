@@ -60,30 +60,30 @@
     mode: "{{ identity_default_suid_mode }}"
 
 
-- name: Check if mps-bash-aliases directory exists
+- name: Check if mps-terminal-bash-aliases directory exists
   ansible.builtin.stat:
-    path: "{{ bash_repos_dir }}/mps-bash-aliases"
+    path: "{{ bash_repos_dir }}/mps-terminal-bash-aliases"
   register: bash_repo_dir
 
-- name: Check if mps-bash-aliases is a Git repository
+- name: Check if mps-terminal-bash-aliases is a Git repository
   ansible.builtin.stat:
-    path: "{{ bash_repos_dir }}/mps-bash-aliases/.git"
+    path: "{{ bash_repos_dir }}/mps-terminal-bash-aliases/.git"
   register: bash_git_dir
   when: bash_repo_dir.stat.exists
 
-- name: Clone mps-bash-aliases repository
+- name: Clone mps-terminal-bash-aliases repository
   ansible.builtin.git:
     repo: "{{ bash_repo }}"
-    dest: "{{ bash_repos_dir }}/mps-bash-aliases"
+    dest: "{{ bash_repos_dir }}/mps-terminal-bash-aliases"
     version: "{{ bash_version }}"
     force: true
   become: true
   when: not bash_repo_dir.stat.exists
 
-- name: Pull mps-bash-aliases repository
+- name: Pull mps-terminal-bash-aliases repository
   ansible.builtin.git:
     repo: "{{ bash_repo }}"
-    dest: "{{ bash_repos_dir }}/mps-bash-aliases"
+    dest: "{{ bash_repos_dir }}/mps-terminal-bash-aliases"
     version: "{{ bash_version }}"
     force: true
     update: true
@@ -94,7 +94,7 @@
 
 - name: Ensure permissions for target directory
   ansible.builtin.file:
-    path: "{{ bash_repos_dir }}/mps-bash-aliases"
+    path: "{{ bash_repos_dir }}/mps-terminal-bash-aliases"
     state: directory
     owner: "root"
     group: "{{ user_default_admin_group }}"
@@ -113,7 +113,7 @@
 
 - name: Deploy system bash aliases when enabled
   ansible.builtin.copy:
-    src: "{{ bash_repos_dir }}/mps-bash-aliases/"
+    src: "{{ bash_repos_dir }}/mps-terminal-bash-aliases/"
     dest: /etc/bash_aliases.d/
     remote_src: true
     owner: "root"
