@@ -17,7 +17,7 @@ Install and register Nerd Fonts and other TTF fonts
 
 ## Dependencies
 
-- `odem.users.user`
+- `odem.os.user`
 
 ## Example usage
 

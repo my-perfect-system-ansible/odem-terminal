@@ -22,7 +22,7 @@ Install and configure Neovim with dependencies
 
 ## Dependencies
 
-- `odem.users.user`
+- `odem.os.user`
 
 ## Example usage
 

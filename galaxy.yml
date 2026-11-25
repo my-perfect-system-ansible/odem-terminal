@@ -29,5 +29,5 @@ build_ignore:
   - "*.tar.gz"
   - .ansible
 dependencies:
-  odem.users: ">=0.1.0"
+  odem.os: ">=0.1.0"
   ansible.posix: ">=1.0.0"

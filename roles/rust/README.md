@@ -16,7 +16,7 @@ Install and configure Rust toolchain (rustup, cargo, CLI tools)
 
 ## Dependencies
 
-- `odem.users.user`
+- `odem.os.user`
 
 ## Example usage
 

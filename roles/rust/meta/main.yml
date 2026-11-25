@@ -21,4 +21,4 @@ galaxy_info:
     - cargo
     - odem-terminal
 dependencies:
-  - role: odem.users.user
+  - role: odem.os.user

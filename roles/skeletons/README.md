@@ -10,7 +10,7 @@ Deploy per-user project skeleton templates to ~/.config/skeletons
 
 ## Dependencies
 
-- `odem.users.user`
+- `odem.os.user`
 
 ## Example usage
 

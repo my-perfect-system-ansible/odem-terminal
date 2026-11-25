@@ -10,7 +10,7 @@ Deploy per-user scripts and utilities to ~/.local/bin
 
 ## Dependencies
 
-- `odem.users.user`
+- `odem.os.user`
 
 ## Example usage
 

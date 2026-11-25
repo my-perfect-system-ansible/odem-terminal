@@ -102,7 +102,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0700"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -111,7 +111,7 @@
   ansible.builtin.command:
     cmd: sudo -u {{ entity.name }} python3 -m venv "{{ entity.home }}/.venvs/nvim"
     creates: "{{ entity.home }}/.venvs/nvim"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -120,7 +120,7 @@
   ansible.builtin.command:
     cmd: sudo -u {{ entity.name }} "{{ entity.home }}/.venvs/nvim/bin/pip" install ruff-lsp debugpy pynvim
     creates: "{{ entity.home }}/.venvs/nvim/bin/ruff-lsp"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -182,7 +182,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0700"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -198,7 +198,7 @@
     # destination directory itself (not the files) — the dir is pre-created
     # at 0700 above instead. directory_mode covers subdirectories.
     directory_mode: "0700"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -210,7 +210,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0700"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -257,7 +257,7 @@
     group: "{{ item.0.group | default(item.0.name) }}"
     mode: "0700"
     remote_src: true
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') | product(['yazi', 'ya']) | list }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') | product(['yazi', 'ya']) | list }}"
   loop_control:
     label: "{{ item.0.name }}/{{ item.1 }}"
   when: nvim_enable_yazi | bool
@@ -275,7 +275,7 @@
   ansible.builtin.command:
     cmd: sudo -u {{ entity.name }} "{{ entity.home }}/.cargo/bin/cargo" install --locked fd-find
     creates: "{{ entity.home }}/.cargo/bin/fd"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -285,7 +285,7 @@
   ansible.builtin.command:
     cmd: sudo -u {{ entity.name }} "{{ entity.home }}/.cargo/bin/cargo" install --locked tree-sitter-cli
     creates: "{{ entity.home }}/.cargo/bin/tree-sitter"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_nvim') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"

@@ -10,7 +10,7 @@ Install and configure tmux and tmuxinator
 
 ## Dependencies
 
-- `odem.users.user`
+- `odem.os.user`
 
 ## Example usage
 

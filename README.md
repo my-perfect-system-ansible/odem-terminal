@@ -47,7 +47,7 @@ ansible-galaxy collection install odem.terminal
           terminal_python: true
           terminal_nvim: true
   roles:
-    - odem.users.user
+    - odem.os.user
     - odem.terminal.bash
     - odem.terminal.python
     - odem.terminal.nvim

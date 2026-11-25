@@ -18,7 +18,7 @@ Configure vim dotfiles per user
 
 ## Dependencies
 
-- `odem.users.user`
+- `odem.os.user`
 
 ## Example usage
 

@@ -16,7 +16,7 @@ Configure kitty terminal emulator per user
 
 ## Dependencies
 
-- `odem.users.user`
+- `odem.os.user`
 
 ## Example usage
 

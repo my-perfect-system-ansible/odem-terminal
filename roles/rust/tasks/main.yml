@@ -32,7 +32,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0700"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_rust') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_rust') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -44,7 +44,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0700"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_rust') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_rust') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -53,7 +53,7 @@
   ansible.builtin.command:
     cmd: sudo -u {{ entity.name }} /usr/share/mps/tools/rustup/rustup.sh -y --no-modify-path
     creates: "{{ entity.home }}/.cargo/bin/rustc"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_rust') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_rust') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -62,7 +62,7 @@
   ansible.builtin.file:
     path: "{{ entity.home }}/.rustup/toolchains"
     state: absent
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_rust') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_rust') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -72,7 +72,7 @@
   ansible.builtin.command:
     cmd: sudo -u {{ entity.name }} "{{ entity.home }}/.cargo/bin/rustup" default stable
     # changed_when: false
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_rust') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_rust') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -85,7 +85,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0600"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_rust') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_rust') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -98,7 +98,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0600"
-  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_rust') }}"
+  loop: "{{ user_resolved | odem.os.odem_filter_users('terminal_rust') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"

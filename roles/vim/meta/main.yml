@@ -20,4 +20,4 @@ galaxy_info:
     - vim
     - odem-terminal
 dependencies:
-  - role: odem.users.user
+  - role: odem.os.user
