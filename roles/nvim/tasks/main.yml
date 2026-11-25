@@ -133,21 +133,21 @@
     owner: "root"
     group: "root"
 
-- name: Check if mps-nvim directory exists
+- name: Check if mps-terminal-nvim directory exists
   ansible.builtin.stat:
-    path: "{{ nvim_repos_dir }}/mps-nvim"
+    path: "{{ nvim_repos_dir }}/mps-terminal-nvim"
   register: nvim_repo_dir
 
-- name: Check if mps-nvim is a Git repository
+- name: Check if mps-terminal-nvim is a Git repository
   ansible.builtin.stat:
-    path: "{{ nvim_repos_dir }}/mps-nvim/.git"
+    path: "{{ nvim_repos_dir }}/mps-terminal-nvim/.git"
   register: nvim_git_dir
   when: nvim_repo_dir.stat.exists
 
-- name: Clone mps-nvim repository
+- name: Clone mps-terminal-nvim repository
   ansible.builtin.git:
     repo: "{{ nvim_repo }}"
-    dest: "{{ nvim_repos_dir }}/mps-nvim"
+    dest: "{{ nvim_repos_dir }}/mps-terminal-nvim"
     version: "{{ nvim_version }}"
     force: true
   become: true
@@ -155,7 +155,7 @@
 
 - name: Ensure permissions for target directory
   ansible.builtin.file:
-    path: "{{ nvim_repos_dir }}/mps-nvim"
+    path: "{{ nvim_repos_dir }}/mps-terminal-nvim"
     state: directory
     owner: "root"
     group: "{{ user_default_admin_group }}"
@@ -163,10 +163,10 @@
     mode: "2775"
   become: true
 
-- name: Pull mps-nvim repository
+- name: Pull mps-terminal-nvim repository
   ansible.builtin.git:
     repo: "{{ nvim_repo }}"
-    dest: "{{ nvim_repos_dir }}/mps-nvim"
+    dest: "{{ nvim_repos_dir }}/mps-terminal-nvim"
     version: "{{ nvim_version }}"
     force: true
     update: true
@@ -189,7 +189,7 @@
 
 - name: Deploy per-user nvim configuration tree
   ansible.builtin.copy:
-    src: "{{ nvim_repos_dir }}/mps-nvim/"
+    src: "{{ nvim_repos_dir }}/mps-terminal-nvim/config/nvim/"
     dest: "{{ entity.home }}/.config/nvim/"
     remote_src: true
     owner: "{{ entity.name }}"
@@ -198,15 +198,6 @@
     # destination directory itself (not the files) — the dir is pre-created
     # at 0700 above instead. directory_mode covers subdirectories.
     directory_mode: "0700"
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_nvim') }}"
-  loop_control:
-    loop_var: entity
-    label: "{{ entity.name }}"
-
-- name: Remove per-user nvim .git dir
-  ansible.builtin.file:
-    path: "{{ nvim_repos_dir }}/mps-nvim/.git"
-    state: absent
   loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_nvim') }}"
   loop_control:
     loop_var: entity

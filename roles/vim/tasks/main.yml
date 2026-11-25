@@ -71,21 +71,21 @@
     owner: "root"
     group: "root"
 
-- name: Check if mps-vim directory exists
+- name: Check if mps-terminal-vim directory exists
   ansible.builtin.stat:
-    path: "{{ vim_repos_dir }}/mps-vim"
+    path: "{{ vim_repos_dir }}/mps-terminal-vim"
   register: vim_repo_dir
 
-- name: Check if mps-vim is a Git repository
+- name: Check if mps-terminal-vim is a Git repository
   ansible.builtin.stat:
-    path: "{{ vim_repos_dir }}/mps-vim/.git"
+    path: "{{ vim_repos_dir }}/mps-terminal-vim/.git"
   register: vim_git_dir
   when: vim_repo_dir.stat.exists
 
-- name: Clone mps-vim repository
+- name: Clone mps-terminal-vim repository
   ansible.builtin.git:
     repo: "{{ vim_repo }}"
-    dest: "{{ vim_repos_dir }}/mps-vim"
+    dest: "{{ vim_repos_dir }}/mps-terminal-vim"
     version: "{{ vim_version }}"
     force: true
   become: true
@@ -93,7 +93,7 @@
 
 - name: Ensure permissions for target directory
   ansible.builtin.file:
-    path: "{{ vim_repos_dir }}/mps-vim"
+    path: "{{ vim_repos_dir }}/mps-terminal-vim"
     state: directory
     owner: "root"
     group: "{{ user_default_admin_group }}"
@@ -101,10 +101,10 @@
     mode: "2775"
   become: true
 
-- name: Pull mps-vim repository
+- name: Pull mps-terminal-vim repository
   ansible.builtin.git:
     repo: "{{ vim_repo }}"
-    dest: "{{ vim_repos_dir }}/mps-vim"
+    dest: "{{ vim_repos_dir }}/mps-terminal-vim"
     version: "{{ vim_version }}"
     force: true
     update: true
@@ -115,7 +115,7 @@
 
 - name: Deploy per-user .vimrc
   ansible.builtin.copy:
-    src: "{{ vim_repos_dir }}/mps-vim/.vimrc"
+    src: "{{ vim_repos_dir }}/mps-terminal-vim/config/vim/.vimrc"
     dest: "{{ entity.home }}/.vimrc"
     remote_src: true
     owner: "{{ entity.name }}"
@@ -131,7 +131,7 @@
 
 - name: Deploy per-user .NERDTreeBookmarks
   ansible.builtin.copy:
-    src: "{{ vim_repos_dir }}/mps-vim/.NERDTreeBookmarks"
+    src: "{{ vim_repos_dir }}/mps-terminal-vim/config/vim/.NERDTreeBookmarks"
     dest: "{{ entity.home }}/.NERDTreeBookmarks"
     remote_src: true
     owner: "{{ entity.name }}"
