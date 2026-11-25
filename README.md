@@ -39,7 +39,7 @@ ansible-galaxy collection install odem.terminal
 - hosts: all
   become: true
   vars:
-    users_catalog:
+    user_catalog:
       alice:
         shell: /bin/bash
         user_roles:
@@ -47,7 +47,7 @@ ansible-galaxy collection install odem.terminal
           terminal_python: true
           terminal_nvim: true
   roles:
-    - odem.base.identity
+    - odem.users.user
     - odem.terminal.bash
     - odem.terminal.python
     - odem.terminal.nvim

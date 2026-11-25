@@ -6,5 +6,5 @@ kitty_enable_alternatives: true
 
 # Regular configuration
 kitty_repo: "https://github.com/my-perfect-system/mps-terminal-kitty.git"
-kitty_repos_dir: "{{ identity_default_repo_dir_mps }}"
+kitty_repos_dir: "{{ user_default_repo_dir_mps }}"
 kitty_version: "main"

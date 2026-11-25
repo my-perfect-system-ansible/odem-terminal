@@ -11,7 +11,7 @@ argument_specs:
       fonts_repos_dir:
         type: str
         required: false
-        default: "{{ identity_default_repo_dir_mps }}"
+        default: "{{ user_default_repo_dir_mps }}"
         description: System-wide mps repo dir the clone lands in
       fonts_version:
         type: str

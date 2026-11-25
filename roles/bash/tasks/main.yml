@@ -57,7 +57,7 @@
     state: directory
     owner: "root"
     group: "{{ user_default_admin_group }}"
-    mode: "{{ identity_default_suid_mode }}"
+    mode: "{{ user_default_suid_mode }}"
 
 
 - name: Check if mps-terminal-bash-aliases directory exists
@@ -98,7 +98,7 @@
     state: directory
     owner: "root"
     group: "{{ user_default_admin_group }}"
-    mode: "{{ identity_default_suid_mode }}"
+    mode: "{{ user_default_suid_mode }}"
     recurse: yes
   become: true
 
@@ -108,7 +108,7 @@
     state: directory
     owner: "root"
     group: "{{ user_default_admin_group }}"
-    mode: "{{ identity_default_suid_mode }}"
+    mode: "{{ user_default_suid_mode }}"
   when: bash_enable_aliases | bool
 
 - name: Deploy system bash aliases when enabled
@@ -118,7 +118,7 @@
     remote_src: true
     owner: "root"
     group: "{{ user_default_admin_group }}"
-    mode: "{{ identity_default_suid_mode }}"
+    mode: "{{ user_default_suid_mode }}"
     directory_mode: true
   when: bash_enable_aliases | bool
 
@@ -128,7 +128,7 @@
     state: directory
     owner: "root"
     group: "{{ user_default_admin_group }}"
-    mode: "{{ identity_default_suid_mode }}"
+    mode: "{{ user_default_suid_mode }}"
   when: bash_enable_aliases | bool
 
 # Per-user configure
@@ -139,7 +139,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0600"
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -152,7 +152,7 @@
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0600"
     directory_mode: "0700"
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -164,7 +164,7 @@
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0700"
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -172,7 +172,7 @@
 - name: Check for legacy .bashrc_alias_custom per user
   ansible.builtin.stat:
     path: "{{ entity.home }}/.config/bashrc/.bashrc_alias_custom"
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -196,7 +196,7 @@
   ansible.builtin.file:
     path: "{{ entity.home }}/.config/bashrc/.bashrc_alias_custom"
     state: absent
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -204,7 +204,7 @@
 - name: Check for legacy .bash_logout per user
   ansible.builtin.stat:
     path: "{{ entity.home }}/.bash_logout"
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -228,7 +228,7 @@
   ansible.builtin.file:
     path: "{{ entity.home }}/.bash_history"
     state: absent
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -237,7 +237,7 @@
   ansible.builtin.file:
     path: "{{ entity.home }}/.bash_logout"
     state: absent
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -246,7 +246,7 @@
   ansible.builtin.file:
     path: "{{ entity.home }}/.bashrc_aliases"
     state: absent
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -255,7 +255,7 @@
   ansible.builtin.file:
     path: "{{ entity.home }}/.bash_aliases"
     state: absent
-  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop: "{{ user_resolved | odem.users.odem_filter_users('terminal_bash') }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"

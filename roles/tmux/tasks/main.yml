@@ -85,7 +85,7 @@
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0600"
     directory_mode: "0700"
-  loop: "{{ identity_users_resolved }}"
+  loop: "{{ user_resolved }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"
@@ -101,7 +101,7 @@
     group: "{{ entity.group | default(entity.name) }}"
     mode: "0600"
     directory_mode: "0700"
-  loop: "{{ identity_users_resolved }}"
+  loop: "{{ user_resolved }}"
   loop_control:
     loop_var: entity
     label: "{{ entity.name }}"

@@ -20,4 +20,4 @@ galaxy_info:
     - bash
     - odem-terminal
 dependencies:
-  - role: odem.base.identity
+  - role: odem.users.user

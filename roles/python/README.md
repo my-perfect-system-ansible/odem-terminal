@@ -10,7 +10,7 @@ Install and configure Python tooling
 
 ## Dependencies
 
-- `odem.base.identity`
+- `odem.users.user`
 
 ## Example usage
 

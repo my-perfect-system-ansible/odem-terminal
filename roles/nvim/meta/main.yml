@@ -21,6 +21,6 @@ galaxy_info:
     - neovim
     - odem-terminal
 dependencies:
-  - role: odem.base.identity
+  - role: odem.users.user
   - role: odem.terminal.rust
   - role: odem.terminal.python

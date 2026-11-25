@@ -23,7 +23,7 @@ provisioner:
     group_vars:
       all:
         ansible_user: root
-        # users_catalog is filled in converge.yml per-role
+        # user_catalog is filled in converge.yml per-role
 
 verifier:
   name: ansible

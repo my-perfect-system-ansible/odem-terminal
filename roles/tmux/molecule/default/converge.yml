@@ -6,10 +6,10 @@
   hosts: all
   become: true
   vars:
-    users_catalog:
+    user_catalog:
       molecule_user:
         user_roles: {}
-    users_list:
+    user_list:
       - name: molecule_user
   roles:
     - role: odem.terminal.tmux
