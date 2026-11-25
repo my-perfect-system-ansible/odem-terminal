@@ -163,6 +163,50 @@
     loop_var: entity
     label: "{{ entity.name }}"
 
+- name: Ensure per-user bash_aliases.d directory
+  ansible.builtin.file:
+    path: "{{ entity.home }}/.config/bash_aliases.d"
+    state: directory
+    owner: "{{ entity.name }}"
+    group: "{{ entity.group | default(entity.name) }}"
+    mode: "0700"
+  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop_control:
+    loop_var: entity
+    label: "{{ entity.name }}"
+
+- name: Check for legacy .bashrc_alias_custom per user
+  ansible.builtin.stat:
+    path: "{{ entity.home }}/.config/bashrc/.bashrc_alias_custom"
+  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop_control:
+    loop_var: entity
+    label: "{{ entity.name }}"
+  register: bash_alias_custom_stat
+
+- name: Migrate legacy .bashrc_alias_custom into bash_aliases.d
+  ansible.builtin.copy:
+    src: "{{ item.entity.home }}/.config/bashrc/.bashrc_alias_custom"
+    dest: "{{ item.entity.home }}/.config/bash_aliases.d/.bashrc_alias_custom"
+    owner: "{{ item.entity.name }}"
+    group: "{{ item.entity.group | default(item.entity.name) }}"
+    mode: "0600"
+    remote_src: true
+  loop: "{{ bash_alias_custom_stat.results }}"
+  loop_control:
+    loop_var: item
+    label: "{{ item.entity.name }}"
+  when: item.stat.exists
+
+- name: Remove legacy .bashrc_alias_custom per user
+  ansible.builtin.file:
+    path: "{{ entity.home }}/.config/bashrc/.bashrc_alias_custom"
+    state: absent
+  loop: "{{ identity_users_resolved | odem.base.odem_filter_users('terminal_bash') }}"
+  loop_control:
+    loop_var: entity
+    label: "{{ entity.name }}"
+
 - name: Check for legacy .bash_logout per user
   ansible.builtin.stat:
     path: "{{ entity.home }}/.bash_logout"
