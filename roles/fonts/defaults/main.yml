@@ -1,12 +1,5 @@
 ---
 
-fonts_dir: /usr/share/fonts
-fonts_list:
-  - name: JetBrainsMono
-    url: https://github.com/ryanoasis/nerd-fonts/releases/download/v3.1.1/JetBrainsMono.zip
-    dst_unzip_path: "{{ fonts_dir }}/JetBrainsMono"
-    creates: "{{ fonts_dir }}/JetBrainsMono/JetBrainsMonoNerdFont-Regular.ttf"
-  - name: codicon
-    url: https://github.com/microsoft/vscode-codicons/releases/download/0.0.36/codicon.ttf
-    dst_unzip_path: "{{ fonts_dir }}/codicon"
-    file_only: true
+fonts_repo: "https://github.com/my-perfect-system/mps-terminal-fonts.git"
+fonts_repos_dir: "{{ identity_default_repo_dir_mps }}"
+fonts_version: "main"

@@ -7,21 +7,21 @@
     owner: "root"
     group: "root"
 
-- name: Check if mps-scripts directory exists
+- name: Check if mps-terminal-scripts directory exists
   ansible.builtin.stat:
-    path: "{{ scripts_repos_dir }}/mps-scripts"
+    path: "{{ scripts_repos_dir }}/mps-terminal-scripts"
   register: scripts_repo_dir
 
-- name: Check if mps-scripts is a Git repository
+- name: Check if mps-terminal-scripts is a Git repository
   ansible.builtin.stat:
-    path: "{{ scripts_repos_dir }}/mps-scripts/.git"
+    path: "{{ scripts_repos_dir }}/mps-terminal-scripts/.git"
   register: scripts_git_dir
   when: scripts_repo_dir.stat.exists
 
-- name: Clone mps-scripts repository
+- name: Clone mps-terminal-scripts repository
   ansible.builtin.git:
     repo: "{{ scripts_repo }}"
-    dest: "{{ scripts_repos_dir }}/mps-scripts"
+    dest: "{{ scripts_repos_dir }}/mps-terminal-scripts"
     version: "{{ scripts_version }}"
     force: true
   become: true
@@ -29,7 +29,7 @@
 
 - name: Ensure permissions for target directory
   ansible.builtin.file:
-    path: "{{ scripts_repos_dir }}/mps-scripts"
+    path: "{{ scripts_repos_dir }}/mps-terminal-scripts"
     state: directory
     owner: "root"
     group: "{{ user_default_admin_group }}"
@@ -37,10 +37,10 @@
     mode: "2775"
   become: true
 
-- name: Pull mps-scripts repository
+- name: Pull mps-terminal-scripts repository
   ansible.builtin.git:
     repo: "{{ scripts_repo }}"
-    dest: "{{ scripts_repos_dir }}/mps-scripts"
+    dest: "{{ scripts_repos_dir }}/mps-terminal-scripts"
     version: "{{ scripts_version }}"
     force: true
     update: true
@@ -66,7 +66,7 @@
 
 - name: Deploy per-user helper scripts
   ansible.builtin.copy:
-    src: "{{ scripts_repos_dir }}/mps-scripts/scripts/"
+    src: "{{ scripts_repos_dir }}/mps-terminal-scripts/scripts/"
     dest: "{{ entity.home }}/.local/bin/"
     remote_src: true
     owner: "{{ entity.name }}"
@@ -81,17 +81,6 @@
     - entity.user_roles.terminal_scripts | default(false)
     - entity.state == 'present'
 
-- name: Remove per-user .git dir
-  ansible.builtin.file:
-    path: "{{ scripts_repos_dir }}/mps-scripts/scripts/.git"
-    state: absent
-  loop: "{{ identity_users_resolved }}"
-  loop_control:
-    loop_var: entity
-    label: "{{ entity.name }}"
-  when:
-    - entity.user_roles.terminal_scripts | default(false)
-    - entity.state == 'present'
 
 - name: Ensure correct permissions on per-user .local/bin tree
   ansible.builtin.file:

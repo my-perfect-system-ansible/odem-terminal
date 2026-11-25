@@ -1,4 +1,54 @@
 ---
+- name: Check if repo directory exists
+  ansible.builtin.file:
+    path: "{{ skeletons_repos_dir }}"
+    state: directory
+    mode: "0777"
+    owner: "root"
+    group: "root"
+
+- name: Check if mps-terminal-skeletons directory exists
+  ansible.builtin.stat:
+    path: "{{ skeletons_repos_dir }}/mps-terminal-skeletons"
+  register: skeletons_repo_dir
+
+- name: Check if mps-terminal-skeletons is a Git repository
+  ansible.builtin.stat:
+    path: "{{ skeletons_repos_dir }}/mps-terminal-skeletons/.git"
+  register: skeletons_git_dir
+  when: skeletons_repo_dir.stat.exists
+
+- name: Clone mps-terminal-skeletons repository
+  ansible.builtin.git:
+    repo: "{{ skeletons_repo }}"
+    dest: "{{ skeletons_repos_dir }}/mps-terminal-skeletons"
+    version: "{{ skeletons_version }}"
+    force: true
+  become: true
+  when: not skeletons_repo_dir.stat.exists
+
+- name: Ensure permissions for target directory
+  ansible.builtin.file:
+    path: "{{ skeletons_repos_dir }}/mps-terminal-skeletons"
+    state: directory
+    owner: "root"
+    group: "{{ user_default_admin_group }}"
+    recurse: yes
+    mode: "2775"
+  become: true
+
+- name: Pull mps-terminal-skeletons repository
+  ansible.builtin.git:
+    repo: "{{ skeletons_repo }}"
+    dest: "{{ skeletons_repos_dir }}/mps-terminal-skeletons"
+    version: "{{ skeletons_version }}"
+    force: true
+    update: true
+  become: true
+  when:
+    - skeletons_repo_dir.stat.exists
+    - skeletons_git_dir.stat.exists
+
 - name: Ensure /etc/mps/skeletons directory exists
   ansible.builtin.file:
     path: /etc/mps/skeletons
@@ -7,7 +57,10 @@
 
 - name: Deploy skeleton files to /etc/mps/skeletons
   ansible.builtin.copy:
-    src: "{{ role_path }}/files/skeletons/"
+    src: "{{ skeletons_repos_dir }}/mps-terminal-skeletons/skeletons/"
     dest: /etc/mps/skeletons/
+    remote_src: true
+    owner: "root"
+    group: "root"
     mode: "0644"
     directory_mode: "0755"

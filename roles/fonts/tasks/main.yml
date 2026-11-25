@@ -1,94 +1,56 @@
 ---
-- name: Install fontconfig and unzip (Debian)
-  ansible.builtin.package:
-    name:
-      - fontconfig
-      - unzip
-    state: present
-  when: ansible_facts['os_family'] == 'Debian'
-
-- name: Install fontconfig and unzip via dnf CLI
-  ansible.builtin.command: dnf install -y fontconfig unzip
-  when: ansible_facts['os_family'] == 'RedHat'
-  register: dnf_install_fonts_deps
-  changed_when: "'Nothing to do' not in dnf_install_fonts_deps.stdout"
-
-- name: Ensure fonts directory exists
+- name: Check if repo directory exists
   ansible.builtin.file:
-    path: "{{ fonts_dir }}"
+    path: "{{ fonts_repos_dir }}"
     state: directory
-    mode: "0755"
+    mode: "0777"
+    owner: "root"
+    group: "root"
 
-- name: Stat existing font files
+- name: Check if mps-terminal-fonts directory exists
   ansible.builtin.stat:
-    path: "{{ item.creates if item.creates is defined else item.dst_unzip_path + '/' + item.name + '.ttf' }}"
-  loop: "{{ fonts_list }}"
-  register: fonts_stat_results
+    path: "{{ fonts_repos_dir }}/mps-terminal-fonts"
+  register: fonts_repo_dir
 
-- name: Download font archives
-  ansible.builtin.get_url:
-    url: "{{ item.0.url }}"
-    dest: "{{ fonts_dir }}/{{ item.0.name }}{{ '.ttf' if item.0.file_only | default(false) else '.zip' }}"
-    owner: root
-    group: root
-    mode: "0644"
-  loop: "{{ fonts_list | zip(fonts_stat_results.results) | list }}"
-  loop_control:
-    label: "{{ item.0.name }}"
-  when: not item.1.stat.exists
+- name: Check if mps-terminal-fonts is a Git repository
+  ansible.builtin.stat:
+    path: "{{ fonts_repos_dir }}/mps-terminal-fonts/.git"
+  register: fonts_git_dir
+  when: fonts_repo_dir.stat.exists
 
-- name: Ensure font extract directories exist
+- name: Clone mps-terminal-fonts repository
+  ansible.builtin.git:
+    repo: "{{ fonts_repo }}"
+    dest: "{{ fonts_repos_dir }}/mps-terminal-fonts"
+    version: "{{ fonts_version }}"
+    force: true
+  become: true
+  when: not fonts_repo_dir.stat.exists
+
+- name: Ensure permissions for target directory
   ansible.builtin.file:
-    path: "{{ item.0.dst_unzip_path }}"
+    path: "{{ fonts_repos_dir }}/mps-terminal-fonts"
     state: directory
-    owner: root
-    group: root
-    mode: "0755"
-  loop: "{{ fonts_list | zip(fonts_stat_results.results) | list }}"
-  loop_control:
-    label: "{{ item.0.name }}"
-  when: not item.1.stat.exists
+    owner: "root"
+    group: "{{ user_default_admin_group }}"
+    recurse: yes
+    mode: "2775"
+  become: true
 
-- name: Unarchive font zip files
-  ansible.builtin.unarchive:
-    src: "{{ fonts_dir }}/{{ item.0.name }}.zip"
-    dest: "{{ item.0.dst_unzip_path }}"
-    creates: "{{ item.0.creates | default(omit) }}"
-    owner: root
-    group: root
-    mode: "0644"
-    remote_src: true
-  loop: "{{ fonts_list | zip(fonts_stat_results.results) | list }}"
-  loop_control:
-    label: "{{ item.0.name }}"
+- name: Pull mps-terminal-fonts repository
+  ansible.builtin.git:
+    repo: "{{ fonts_repo }}"
+    dest: "{{ fonts_repos_dir }}/mps-terminal-fonts"
+    version: "{{ fonts_version }}"
+    force: true
+    update: true
+  become: true
   when:
-    - not item.0.file_only | default(false)
-    - not item.1.stat.exists
-  notify: Rebuild font cache
+    - fonts_repo_dir.stat.exists
+    - fonts_git_dir.stat.exists
 
-- name: Copy single-font files into place
-  ansible.builtin.copy:
-    src: "{{ fonts_dir }}/{{ item.0.name }}.ttf"
-    dest: "{{ item.0.dst_unzip_path }}/{{ item.0.name }}.ttf"
-    owner: root
-    group: root
-    mode: "0644"
-    remote_src: true
-  loop: "{{ fonts_list | zip(fonts_stat_results.results) | list }}"
-  loop_control:
-    label: "{{ item.0.name }}"
-  when:
-    - item.0.file_only | default(false)
-    - not item.1.stat.exists
-  notify: Rebuild font cache
-
-- name: Clean up downloaded font archives
-  ansible.builtin.file:
-    path: "{{ fonts_dir }}/{{ item.0.name }}{{ '.ttf' if item.0.file_only | default(false) else '.zip' }}"
-    state: absent
-  loop: "{{ fonts_list | zip(fonts_stat_results.results) | list }}"
-  loop_control:
-    label: "{{ item.0.name }}"
-  when:
-    - item.0.cleanup | default(true)
-    - not item.1.stat.exists
+- name: Run mps-terminal-fonts installer
+  ansible.builtin.command:
+    cmd: bash {{ fonts_repos_dir }}/mps-terminal-fonts/install.sh
+  become: true
+  changed_when: true

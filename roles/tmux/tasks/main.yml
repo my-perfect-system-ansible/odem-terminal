@@ -28,9 +28,58 @@
     gem_install_tmuxinator.rc != 0 and
     'already installed' not in gem_install_tmuxinator.stderr
 
+- name: Check if repo directory exists
+  ansible.builtin.file:
+    path: "{{ tmux_repos_dir }}"
+    state: directory
+    mode: "0777"
+    owner: "root"
+    group: "root"
+
+- name: Check if mps-terminal-tmux directory exists
+  ansible.builtin.stat:
+    path: "{{ tmux_repos_dir }}/mps-terminal-tmux"
+  register: tmux_repo_dir
+
+- name: Check if mps-terminal-tmux is a Git repository
+  ansible.builtin.stat:
+    path: "{{ tmux_repos_dir }}/mps-terminal-tmux/.git"
+  register: tmux_git_dir
+  when: tmux_repo_dir.stat.exists
+
+- name: Clone mps-terminal-tmux repository
+  ansible.builtin.git:
+    repo: "{{ tmux_repo }}"
+    dest: "{{ tmux_repos_dir }}/mps-terminal-tmux"
+    version: "{{ tmux_version }}"
+    force: true
+  become: true
+  when: not tmux_repo_dir.stat.exists
+
+- name: Ensure permissions for target directory
+  ansible.builtin.file:
+    path: "{{ tmux_repos_dir }}/mps-terminal-tmux"
+    state: directory
+    owner: "root"
+    group: "{{ user_default_admin_group }}"
+    recurse: yes
+    mode: "2775"
+  become: true
+
+- name: Pull mps-terminal-tmux repository
+  ansible.builtin.git:
+    repo: "{{ tmux_repo }}"
+    dest: "{{ tmux_repos_dir }}/mps-terminal-tmux"
+    version: "{{ tmux_version }}"
+    force: true
+    update: true
+  become: true
+  when:
+    - tmux_repo_dir.stat.exists
+
 - name: Deploy per-user tmux configuration tree
   ansible.builtin.copy:
-    src: "{{ role_path }}/files/dotfiles/.config/tmux/"
+    src: "{{ tmux_repos_dir }}/mps-terminal-tmux/config/tmux/"
     dest: "{{ entity.home }}/.config/tmux/"
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
@@ -46,7 +95,7 @@
 
 - name: Deploy per-user tmuxinator configuration tree
   ansible.builtin.copy:
-    src: "{{ role_path }}/files/dotfiles/.config/tmuxinator/"
+    src: "{{ tmux_repos_dir }}/mps-terminal-tmux/config/tmuxinator/"
     dest: "{{ entity.home }}/.config/tmuxinator/"
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"

@@ -1,4 +1,20 @@
+---
 argument_specs:
   main:
-    short_description: Deploy per-user project skeleton templates to ~/.config/skeletons
-    options: {}
+    short_description: Deploy project skeleton templates to /etc/mps/skeletons via the mps-terminal-skeletons repo
+    options:
+      skeletons_repo:
+        type: str
+        required: false
+        default: https://github.com/my-perfect-system/mps-terminal-skeletons.git
+        description: Git repository cloned and deployed
+      skeletons_repos_dir:
+        type: str
+        required: false
+        default: "{{ identity_default_repo_dir_mps }}"
+        description: System-wide mps repo dir the clone lands in
+      skeletons_version:
+        type: str
+        required: false
+        default: main
+        description: Branch/tag of the mps-terminal-skeletons repo
