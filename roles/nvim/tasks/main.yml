@@ -1,5 +1,12 @@
 ---
 # System-level install
+- name: Resolve identity facts when missing
+  ansible.builtin.include_role:
+    name: odem.os.user
+    tasks_from: identity.yml
+    public: true
+  when: user_resolved is not defined or user_default_repo_dir_mps is not defined
+
 - name: Install nvim dependencies (Debian)
   ansible.builtin.package:
     name:

@@ -19,5 +19,4 @@ galaxy_info:
     - terminal
     - kitty
     - odem-terminal
-dependencies:
-  - role: odem.os.user
+dependencies: []

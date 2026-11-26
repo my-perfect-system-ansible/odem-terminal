@@ -11,7 +11,7 @@ argument_specs:
       skeletons_repos_dir:
         type: str
         required: false
-        default: "{{ user_default_repo_dir_mps }}"
+        default: /srv/repo/github/my-perfect-system/mps
         description: System-wide mps repo dir the clone lands in
       skeletons_version:
         type: str

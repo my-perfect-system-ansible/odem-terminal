@@ -1,4 +1,10 @@
 ---
+# Canonical ecosystem global — exposed per play by the lazy identity guard
+# (odem.os.user defaults via include_role public: true); mirrored here so
+# argument-spec validation can render the templated defaults below before
+# the guard runs. Keep in sync with odem-os/roles/user/defaults/main.yml;
+# inventory overrides still win.
+user_default_repo_dir_mps: /srv/repo/github/my-perfect-system/mps
 
 # Feature toggles — naming pattern: <rolename>_enable_<feature>
 

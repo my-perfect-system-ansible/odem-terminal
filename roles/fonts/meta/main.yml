@@ -19,5 +19,4 @@ galaxy_info:
     - terminal
     - fonts
     - odem-terminal
-dependencies:
-  - role: odem.os.user
+dependencies: []

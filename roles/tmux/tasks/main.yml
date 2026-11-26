@@ -1,4 +1,11 @@
 ---
+- name: Resolve identity facts when missing
+  ansible.builtin.include_role:
+    name: odem.os.user
+    tasks_from: identity.yml
+    public: true
+  when: user_resolved is not defined or user_default_repo_dir_mps is not defined
+
 - name: Install tmux and tmuxinator (Debian)
   ansible.builtin.package:
     name:
@@ -76,15 +83,49 @@
   become: true
   when:
     - tmux_repo_dir.stat.exists
+    - tmux_git_dir.stat.exists
+
+- name: Ensure per-user tmux config directory exists
+  ansible.builtin.file:
+    path: "{{ entity.home }}/.config/tmux"
+    state: directory
+    owner: "{{ entity.name }}"
+    group: "{{ entity.group | default(entity.name) }}"
+    mode: "0700"
+  loop: "{{ user_resolved }}"
+  loop_control:
+    loop_var: entity
+    label: "{{ entity.name }}"
+  when:
+    - entity.user_roles.terminal_tmux | default(false)
+    - entity.state == 'present'
 
 - name: Deploy per-user tmux configuration tree
   ansible.builtin.copy:
     src: "{{ tmux_repos_dir }}/mps-terminal-tmux/config/tmux/"
     dest: "{{ entity.home }}/.config/tmux/"
+    remote_src: true
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
-    mode: "0600"
+    # NOTE: with remote_src + directory src, `mode` is applied to the
+    # destination directory itself (not the files) — the dir is pre-created
+    # at 0700 above instead. directory_mode covers subdirectories.
     directory_mode: "0700"
+  loop: "{{ user_resolved }}"
+  loop_control:
+    loop_var: entity
+    label: "{{ entity.name }}"
+  when:
+    - entity.user_roles.terminal_tmux | default(false)
+    - entity.state == 'present'
+
+- name: Ensure per-user tmuxinator config directory exists
+  ansible.builtin.file:
+    path: "{{ entity.home }}/.config/tmuxinator"
+    state: directory
+    owner: "{{ entity.name }}"
+    group: "{{ entity.group | default(entity.name) }}"
+    mode: "0700"
   loop: "{{ user_resolved }}"
   loop_control:
     loop_var: entity
@@ -97,9 +138,12 @@
   ansible.builtin.copy:
     src: "{{ tmux_repos_dir }}/mps-terminal-tmux/config/tmuxinator/"
     dest: "{{ entity.home }}/.config/tmuxinator/"
+    remote_src: true
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
-    mode: "0600"
+    # NOTE: with remote_src + directory src, `mode` is applied to the
+    # destination directory itself (not the files) — the dir is pre-created
+    # at 0700 above instead. directory_mode covers subdirectories.
     directory_mode: "0700"
   loop: "{{ user_resolved }}"
   loop_control:

@@ -1,4 +1,11 @@
 ---
+- name: Resolve identity facts when missing
+  ansible.builtin.include_role:
+    name: odem.os.user
+    tasks_from: identity.yml
+    public: true
+  when: user_resolved is not defined or user_default_repo_dir_mps is not defined
+
 - name: Install kitty package (Debian)
   ansible.builtin.package:
     name: kitty
@@ -70,13 +77,31 @@
     - kitty_repo_dir.stat.exists
     - kitty_git_dir.stat.exists
 
+- name: Ensure per-user kitty config directory exists
+  ansible.builtin.file:
+    path: "{{ entity.home }}/.config/kitty"
+    state: directory
+    owner: "{{ entity.name }}"
+    group: "{{ entity.group | default(entity.name) }}"
+    mode: "0700"
+  loop: "{{ user_resolved }}"
+  loop_control:
+    loop_var: entity
+    label: "{{ entity.name }}"
+  when:
+    - entity.user_roles.terminal_kitty | default(false)
+    - entity.state == 'present'
+
 - name: Deploy per-user kitty configuration tree
   ansible.builtin.copy:
     src: "{{ kitty_repos_dir }}/mps-terminal-kitty/config/kitty/"
     dest: "{{ entity.home }}/.config/kitty/"
+    remote_src: true
     owner: "{{ entity.name }}"
     group: "{{ entity.group | default(entity.name) }}"
-    mode: "0600"
+    # NOTE: with remote_src + directory src, `mode` is applied to the
+    # destination directory itself (not the files) — the dir is pre-created
+    # at 0700 above instead. directory_mode covers subdirectories.
     directory_mode: "0700"
   loop: "{{ user_resolved }}"
   loop_control:

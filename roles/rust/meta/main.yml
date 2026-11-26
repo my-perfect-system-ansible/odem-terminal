@@ -20,5 +20,4 @@ galaxy_info:
     - rust
     - cargo
     - odem-terminal
-dependencies:
-  - role: odem.os.user
+dependencies: []
