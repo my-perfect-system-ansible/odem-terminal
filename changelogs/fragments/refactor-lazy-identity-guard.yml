@@ -1,0 +1,24 @@
+---
+# Fragment for the lazy identity guard refactor (2026-11-26).
+# Compiles into changelogs/changelog.yaml at release time.
+removed_features:
+  - |
+    All 10 roles no longer meta-depend on `odem.os.user`. The identity-consuming
+    roles resolve `user_resolved`/`user_present`/`user_absent`/`user_group_names`
+    plus the `user_default_*` globals lazily via a first-task
+    `include_role {name: odem.os.user, tasks_from: identity.yml, public: true}`
+    guard instead; account management only runs where `odem.os.user` is applied
+    explicitly (e.g. the bootstrap playbook). Standalone role application no
+    longer creates or touches user accounts.
+bugfixes:
+  - |
+    `tmux` and `kitty` per-user config deploys copy from the mps-terminal-* clone
+    on the target with `remote_src: true` (the destination config dirs are
+    pre-created at 0700; `mode` dropped from the directory copies — with
+    `remote_src` it applies to the destination directory itself). The tmux pull
+    task also gates on `tmux_git_dir.stat.exists`, aligning with kitty.
+  - |
+    Argument-spec validation renders role defaults before any task, so spec
+    `default:` fields are now literals and the 8 consuming roles mirror the
+    canonical `user_default_repo_dir_mps` value in their own `defaults/main.yml`
+    (inventory overrides still win; task-time values are unchanged).
