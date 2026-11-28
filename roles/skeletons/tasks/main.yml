@@ -75,5 +75,8 @@
     remote_src: true
     owner: "root"
     group: "root"
-    mode: "0644"
+    # No mode here: with remote_src + directory src, copy applies mode to
+    # the destination dir itself (0644 -> drw-r--r--, untraversable for
+    # the non-root users of new-skeleton.bash). The dir is pre-created at
+    # 0755 above; directory_mode covers subdirs; files keep source modes.
     directory_mode: "0755"
