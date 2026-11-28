@@ -1,6 +1,6 @@
 ---
 # Minimal converge: invoke the role with default vars + a synthetic user
-# so identity-resolved consumers see something without enabling all roles.
+# opted into exactly this role.
 
 - name: Converge
   hosts: all
@@ -8,7 +8,8 @@
   vars:
     user_catalog:
       molecule_user:
-        user_roles: {}
+        user_roles:
+          terminal_python: true
     user_list:
       - name: molecule_user
   roles:

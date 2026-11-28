@@ -1,12 +1,19 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.skeletons: the skeleton drop-in
+# directory /etc/mps/skeletons landed.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.skeletons passed (converge ran without error)."
+    - name: /etc/mps/skeletons exists
+      ansible.builtin.stat:
+        path: /etc/mps/skeletons
+      register: skeletons_dir
+      failed_when: not skeletons_dir.stat.exists
+
+    - name: skeleton files exist under /etc/mps/skeletons
+      ansible.builtin.find:
+        paths: /etc/mps/skeletons
+      register: skeleton_files
+      failed_when: skeleton_files.matched | int == 0

@@ -70,6 +70,12 @@
     owner: "root"
     group: "{{ user_default_admin_group }}"
     recurse: yes
+  become: true
+
+- name: Set setgid bit on mps-terminal-tmux
+  ansible.builtin.file:
+    path: "{{ tmux_repos_dir }}/mps-terminal-tmux"
+    state: directory
     mode: "2775"
   become: true
 

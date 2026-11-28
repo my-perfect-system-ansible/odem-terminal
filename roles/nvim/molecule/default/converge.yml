@@ -1,6 +1,7 @@
 ---
 # Minimal converge: invoke the role with default vars + a synthetic user
-# so identity-resolved consumers see something without enabling all roles.
+# opted into exactly this role. nvim downloads tarballs/npm/cargo per user —
+# slow but container-safe.
 
 - name: Converge
   hosts: all
@@ -8,7 +9,8 @@
   vars:
     user_catalog:
       molecule_user:
-        user_roles: {}
+        user_roles:
+          terminal_nvim: true
     user_list:
       - name: molecule_user
   roles:

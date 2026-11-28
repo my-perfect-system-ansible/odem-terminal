@@ -1,12 +1,19 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.nvim: the nvim symlink landed in
+# /usr/local/bin and molecule_user's init.lua exists.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.nvim passed (converge ran without error)."
+    - name: nvim exists at /usr/local/bin/nvim
+      ansible.builtin.stat:
+        path: /usr/local/bin/nvim
+      register: nvim_bin
+      failed_when: not nvim_bin.stat.exists
+
+    - name: molecule_user init.lua exists
+      ansible.builtin.stat:
+        path: /home/molecule_user/.config/nvim/init.lua
+      register: nvim_init
+      failed_when: not nvim_init.stat.exists

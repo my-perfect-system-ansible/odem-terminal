@@ -1,5 +1,0 @@
----
-# Galaxy collections required by this role.
-# Generated.
-collections:
-  - name: odem.os

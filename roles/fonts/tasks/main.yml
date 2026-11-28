@@ -41,6 +41,12 @@
     owner: "root"
     group: "{{ user_default_admin_group }}"
     recurse: yes
+  become: true
+
+- name: Set setgid bit on mps-terminal-fonts
+  ansible.builtin.file:
+    path: "{{ fonts_repos_dir }}/mps-terminal-fonts"
+    state: directory
     mode: "2775"
   become: true
 

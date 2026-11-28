@@ -1,12 +1,18 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.fonts: the repo installer ran and a
+# JetBrains Mono Nerd Font is registered with fontconfig.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.fonts passed (converge ran without error)."
+    - name: fc-list runs without error
+      ansible.builtin.command: fc-list
+      changed_when: false
+      register: fonts_fc_list
+
+    - name: JetBrains Mono Nerd Font is installed
+      ansible.builtin.assert:
+        that:
+          - fonts_fc_list.stdout is search('(?i)jetbrainsmono')
+        success_msg: JetBrains Mono Nerd Font found in fc-list output

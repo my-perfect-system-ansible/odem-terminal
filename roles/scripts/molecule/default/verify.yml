@@ -1,12 +1,21 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.scripts: molecule_user's .local/bin
+# exists with mode 0700 and at least one deployed script.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.scripts passed (converge ran without error)."
+    - name: molecule_user .local/bin exists with mode 0700
+      ansible.builtin.stat:
+        path: /home/molecule_user/.local/bin
+      register: local_bin
+      failed_when: >-
+        not local_bin.stat.exists or
+        (local_bin.stat.mode | default('')) != '0700'
+
+    - name: at least one deployed script exists in .local/bin
+      ansible.builtin.find:
+        paths: /home/molecule_user/.local/bin
+      register: local_bin_files
+      failed_when: local_bin_files.matched | int == 0

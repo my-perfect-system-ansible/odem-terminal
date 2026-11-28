@@ -1,12 +1,19 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.rust: rustup landed its tool
+# directories under molecule_user's home.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.rust passed (converge ran without error)."
+    - name: molecule_user cargo bin directory exists
+      ansible.builtin.stat:
+        path: /home/molecule_user/.cargo/bin
+      register: cargo_bin
+      failed_when: not cargo_bin.stat.exists
+
+    - name: molecule_user rustup directory exists
+      ansible.builtin.stat:
+        path: /home/molecule_user/.rustup
+      register: rustup_dir
+      failed_when: not rustup_dir.stat.exists

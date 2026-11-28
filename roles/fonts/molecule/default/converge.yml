@@ -1,6 +1,6 @@
 ---
-# Minimal converge: invoke the role with default vars + a synthetic user
-# so identity-resolved consumers see something without enabling all roles.
+# Minimal converge: invoke the role with default vars + a synthetic user.
+# odem.terminal.fonts is system-wide (no per-user gating).
 
 - name: Converge
   hosts: all

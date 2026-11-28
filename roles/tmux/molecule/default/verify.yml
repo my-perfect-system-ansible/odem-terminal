@@ -1,12 +1,21 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.tmux: the tmux package is installed
+# and molecule_user's config directory exists.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.tmux passed (converge ran without error)."
+    - name: Gather installed packages
+      ansible.builtin.package_facts:
+
+    - name: tmux package is installed
+      ansible.builtin.assert:
+        that:
+          - "'tmux' in ansible_facts.packages"
+
+    - name: molecule_user tmux config directory exists
+      ansible.builtin.stat:
+        path: /home/molecule_user/.config/tmux
+      register: tmux_config
+      failed_when: not tmux_config.stat.exists

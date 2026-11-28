@@ -1,12 +1,21 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.vim: the vim package is installed and
+# molecule_user's .vimrc landed.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.vim passed (converge ran without error)."
+    - name: Gather installed packages
+      ansible.builtin.package_facts:
+
+    - name: vim package is installed
+      ansible.builtin.assert:
+        that:
+          - "'vim' in ansible_facts.packages"
+
+    - name: molecule_user .vimrc exists
+      ansible.builtin.stat:
+        path: /home/molecule_user/.vimrc
+      register: vimrc
+      failed_when: not vimrc.stat.exists

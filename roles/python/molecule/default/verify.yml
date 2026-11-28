@@ -1,12 +1,13 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.python: molecule_user's default
+# virtualenv exists with its interpreter.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.python passed (converge ran without error)."
+    - name: molecule_user default venv interpreter exists
+      ansible.builtin.stat:
+        path: /home/molecule_user/.venvs/default/bin/python
+      register: python_venv
+      failed_when: not python_venv.stat.exists

@@ -1,12 +1,21 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.kitty: the kitty package is installed
+# and molecule_user's config directory exists.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.kitty passed (converge ran without error)."
+    - name: Gather installed packages
+      ansible.builtin.package_facts:
+
+    - name: kitty package is installed
+      ansible.builtin.assert:
+        that:
+          - "'kitty' in ansible_facts.packages"
+
+    - name: molecule_user kitty config directory exists
+      ansible.builtin.stat:
+        path: /home/molecule_user/.config/kitty
+      register: kitty_config
+      failed_when: not kitty_config.stat.exists

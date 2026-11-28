@@ -1,12 +1,19 @@
 ---
-# Default verify: smoke-test passes if converge completed without error.
-# Replace with role-specific assertions (stat / package / command) when
-# adding semantic tests.
+# Lightweight verify for odem.terminal.bash: molecule_user's bashrc exists and
+# the system alias drop-ins landed under /etc/bash_aliases.d.
 
 - name: Verify
   hosts: all
   become: true
   tasks:
-    - name: Converge completed successfully
-      ansible.builtin.debug:
-        msg: "Smoke test for odem.terminal.bash passed (converge ran without error)."
+    - name: molecule_user .bashrc exists
+      ansible.builtin.stat:
+        path: /home/molecule_user/.bashrc
+      register: bashrc
+      failed_when: not bashrc.stat.exists
+
+    - name: alias drop-in files exist under /etc/bash_aliases.d
+      ansible.builtin.find:
+        paths: /etc/bash_aliases.d
+      register: alias_files
+      failed_when: alias_files.matched | int == 0

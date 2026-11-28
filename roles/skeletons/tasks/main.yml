@@ -41,6 +41,12 @@
     owner: "root"
     group: "{{ user_default_admin_group }}"
     recurse: yes
+  become: true
+
+- name: Set setgid bit on mps-terminal-skeletons
+  ansible.builtin.file:
+    path: "{{ skeletons_repos_dir }}/mps-terminal-skeletons"
+    state: directory
     mode: "2775"
   become: true
 

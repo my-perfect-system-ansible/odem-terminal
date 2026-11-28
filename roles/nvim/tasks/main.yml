@@ -167,6 +167,12 @@
     owner: "root"
     group: "{{ user_default_admin_group }}"
     recurse: yes
+  become: true
+
+- name: Set setgid bit on mps-terminal-nvim
+  ansible.builtin.file:
+    path: "{{ nvim_repos_dir }}/mps-terminal-nvim"
+    state: directory
     mode: "2775"
   become: true
 
